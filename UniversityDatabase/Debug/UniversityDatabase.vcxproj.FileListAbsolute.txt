@@ -1,0 +1,2 @@
+D:\Documents\UniversityDatabase\UniversityDatabase\UniversityDatabase\Debug\UniversityDatabase.exe
+D:\Documents\UniversityDatabase\UniversityDatabase\UniversityDatabase\Debug\UniversityDatabase.pdb
