@@ -1,10 +1,26 @@
 #pragma once
 #include <iostream>
 
-using namespace std;
+enum class Gender : const char
+{
+	Male = 'M',
+	Female = 'F'
+};
+
 class Person
 {
 	private:
-		string name, surname, socialSecurity, address;
+		std::string name, surname, pesel, address;
+		Gender gender;
+
+public:
+	Person(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender);
+
+	~Person();
+
+	void PrintPersonalInformation();
+
+	bool CheckName(std::string Name);
 };
+
 
