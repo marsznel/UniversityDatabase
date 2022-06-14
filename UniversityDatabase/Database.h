@@ -3,17 +3,27 @@
 #include "Person.h"
 #include <iostream>
 
-
+using People = std::vector<Person>;
 class Database
 {
 private: 
-	std::vector<Person> Persons;
+	People Persons;
+	void RemovePerson(People::iterator it);
 
 public:
-	void AddPerson(Person newPerson);
+	void AddPerson(const Person newPerson);
 
-	std::vector<Person> GetPersons();
+	People GetPersons();
 
-	Person SearchByName(std::string Name);
+	void RemovePersonByPesel(const std::string pesel);
+
+	People SearchBySurname(const std::string surname);
+
+	Person SearchByPesel(const std::string pesel);
+
+	void PrintPeople();
+	void PrintPeople(People people);
+
+	void PrintPersonalInformation(Person person);
 };
 

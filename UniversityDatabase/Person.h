@@ -9,18 +9,24 @@ enum class Gender : const char
 
 class Person
 {
-	private:
-		std::string name, surname, pesel, address;
-		Gender gender;
+private:
+	std::string name, surname, pesel, address;
+	Gender gender;
 
 public:
-	Person(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender);
+	Person(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender);
 
 	~Person();
 
-	void PrintPersonalInformation();
+	std::string GetName();
 
-	bool CheckName(std::string Name);
+	std::string GetSurname();
+
+	std::string GetPesel();
+
+	std::string GetAddress();
+
+	Gender GetGender();
 };
 
 

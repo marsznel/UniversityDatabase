@@ -8,9 +8,8 @@ private:
     float earnings;
 
 public:
-    Employee(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender, float earnings);
+    Employee(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender, const float earnings);
     ~Employee();
 
-    void PrintPersonalInformation();
-
+    float GetEarnings();
 };

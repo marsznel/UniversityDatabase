@@ -5,12 +5,14 @@ class Student :
    public Person
 {
 private:
-    std::string index;
+    unsigned long index;
 public:
-    Student(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender, std::string index);
+    Student(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender, const unsigned long index);
     ~Student();
 
-    void PrintPersonalInformation();
-
+    unsigned long GetIndex()
+    {
+        return index;
+    }
 };
 

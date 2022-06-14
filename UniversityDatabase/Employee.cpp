@@ -1,6 +1,6 @@
 #include "Employee.h"
 
-Employee::Employee(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender, float Earnings) :
+Employee::Employee(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender, const float Earnings) :
 	Person(Name, Surname, Pesel, Address, Gender), earnings { Earnings }
 {
 	earnings = Earnings;
@@ -10,8 +10,7 @@ Employee::~Employee()
 {
 }
 
-void Employee::PrintPersonalInformation()
+float Employee::GetEarnings()
 {
-	Employee::PrintPersonalInformation();
-	std::cout << earnings << std::endl;
+	return earnings;
 }

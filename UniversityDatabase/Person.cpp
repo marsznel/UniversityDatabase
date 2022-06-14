@@ -1,9 +1,7 @@
 #include <iostream>
 #include "Person.h"
 
-
-
-Person::Person(std::string Name, std::string Surname, std::string Pesel, std::string Address, Gender Gender)
+Person::Person(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender)
 {
 	name = Name;
 	surname = Surname;
@@ -16,15 +14,27 @@ Person::~Person()
 {
 }
 
-void Person::PrintPersonalInformation()
+std::string Person::GetName()
 {
-	std::cout << name << std::endl;
-	std::cout << surname << std::endl;
-	std::cout << pesel << std::endl;
-	std::cout << address << std::endl;
+	return name;
 }
 
-bool Person::CheckName(std::string Name)
+std::string Person::GetSurname()
 {
-	return Name == name;
+	return surname;
+}
+
+std::string Person::GetPesel()
+{
+	return pesel;
+}
+
+std::string Person::GetAddress()
+{
+	return address;
+}
+
+Gender Person::GetGender()
+{
+	return gender;
 }
