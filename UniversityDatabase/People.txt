@@ -1,0 +1,7 @@
+Person
+Janek
+Nowak
+12234
+Rondo 45
+Male
+-------------------
