@@ -1,5 +1,5 @@
-#include <iostream>
 #include "Person.h"
+#include <iostream>
 
 Person::Person(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender)
 {
@@ -7,7 +7,11 @@ Person::Person(const std::string Name, const std::string Surname, const std::str
 	surname = Surname;
 	pesel = Pesel;
 	address = Address;
-	gender = Gender; 
+	gender = Gender;
+}
+
+Person::Person()
+{
 }
 
 Person::~Person()
@@ -32,6 +36,11 @@ std::string Person::GetPesel()
 std::string Person::GetAddress()
 {
 	return address;
+}
+
+void Person::ChangeAddress(std::string newAddress)
+{
+	address = newAddress;
 }
 
 Gender Person::GetGender()
