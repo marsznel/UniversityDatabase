@@ -38,6 +38,11 @@ std::string Person::GetAddress()
 	return address;
 }
 
+void Person::ChangeAddress(std::string newAddress)
+{
+	address = newAddress;
+}
+
 Gender Person::GetGender()
 {
 	return gender;

@@ -1,7 +1,14 @@
 Person
 Janek
 Nowak
-12234
-Rondo 45
+55030101193
+Legnicka 45, Wrocław
 Male
+-------------------
+Person
+Agnieszka
+Śpiewak
+55030101193
+Wyszyńskiego 11, Wrocław
+Female
 -------------------

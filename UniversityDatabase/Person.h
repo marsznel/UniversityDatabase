@@ -44,5 +44,6 @@ inline Gender StringToGender(std::string gender)
 		std::string GetSurname();
 		std::string GetPesel();
 		std::string GetAddress();
+		void ChangeAddress(std::string newAddress);
 		Gender GetGender();
 	};
