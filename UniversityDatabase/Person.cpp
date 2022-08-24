@@ -38,7 +38,7 @@ std::string Person::GetAddress()
 	return address;
 }
 
-void Person::ChangeAddress(std::string newAddress)
+void Person::SetAddress(std::string newAddress)
 {
 	address = newAddress;
 }
@@ -46,4 +46,9 @@ void Person::ChangeAddress(std::string newAddress)
 Gender Person::GetGender()
 {
 	return gender;
+}
+
+bool Person::operator == (const Person &person)
+{
+	return this->pesel == person.pesel;
 }

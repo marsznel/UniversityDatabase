@@ -1,4 +1,6 @@
 #include "Database.h"
+#include "Student.h"
+#include "Employee.h"
 #include "Person.h"
 #include <fstream>
 #include <string>
@@ -6,9 +8,9 @@
 #include <list>
 #include <algorithm>
 
-void Database::AddPerson(Person newPerson)
+void Database::AddPerson(Person* newPerson)
 {
-	if (ValidatePesel(newPerson.GetPesel()))
+	if (ValidatePesel(newPerson->GetPesel()))
 	{
 		Persons.push_back(newPerson);
 		std::cout << "New Person was added" << std::endl;
@@ -53,7 +55,6 @@ bool Database::ValidatePesel(const std::string pesel)
 	{
 		return false;
 	}
-
 	return true;
 }
 
@@ -64,22 +65,24 @@ People Database::GetPersons()
 
 void Database::RemovePersonByPesel(const std::string pesel)
 {
-	for (People::iterator it = Persons.begin(); it < Persons.end(); it++)
+	Person* foundPerson = SearchByPesel(pesel);
+	if (NULL != foundPerson)
 	{
-		if (pesel == it->GetPesel())
-		{
-			Persons.erase(it);
-			break;
-		}
+		Persons.erase(std::find(Persons.begin(), Persons.end(), foundPerson));
+		std::cout << "Person was succesfully removed" << std::endl;
+	}
+	else 
+	{
+		std::cout << "There is no person with such PESEL" << std::endl;
 	}
 }
 
 People Database::SearchBySurname(const std::string surname)
 {
 	People foundPeople;
-	for (auto person : Persons)
+	for (auto &person : Persons)
 	{
-		if (surname == person.GetSurname())
+		if (surname == person->GetSurname())
 		{
 			foundPeople.push_back(person);
 		}
@@ -89,12 +92,11 @@ People Database::SearchBySurname(const std::string surname)
 
 Person* Database::SearchByPesel(const std::string pesel)
 {
-	for (auto person : Persons)
+	for (auto &person : Persons)
 	{
-		if (pesel == person.GetPesel())
+		if (pesel == person->GetPesel())
 		{
-			Person savedPerson = person;
-			return &savedPerson;
+			return person;
 		}
 	}
 	return NULL;
@@ -102,27 +104,35 @@ Person* Database::SearchByPesel(const std::string pesel)
 
 void Database::ModifyAddressByPesel(const std::string pesel, const std::string newAddress)
 {
+	
 	Person* foundPerson = SearchByPesel(pesel);
-	if (foundPerson != NULL)
+	if (NULL != foundPerson)
 	{
-		Person personToChange = *foundPerson;
-		personToChange.ChangeAddress(newAddress);
-		std::replace(Persons.begin(), Persons.end(), *foundPerson, personToChange);
+		foundPerson->SetAddress(newAddress);
 	}
 }
 
-void Database::PrintPersonalInformation(Person person)
+void Database::PrintPersonalInformation(Person *person)
 {
-	std::cout << person.GetName() << std::endl;
-	std::cout << person.GetSurname() << std::endl;
-	std::cout << person.GetPesel() << std::endl;
-	std::cout << person.GetAddress() << std::endl;
-	std::cout << GenderToString(person.GetGender()) << std::endl;
+	std::cout << "Name: " << person->GetName() << std::endl;
+	std::cout << "Surname: " << person->GetSurname() << std::endl;
+	std::cout << "Pesel: " << person->GetPesel() << std::endl;
+	std::cout << "Address: " << person->GetAddress() << std::endl;
+	std::cout << "Gender: " << GenderToString(person->GetGender()) << std::endl;
+	if (dynamic_cast<Student*>(person))
+	{
+		std::cout << "Index: " << dynamic_cast<Student*>(person)->GetIndex() << std::endl;
+	}
+	if (dynamic_cast<Employee*>(person))
+	{
+		std::cout << "Earnings: " << dynamic_cast<Employee*>(person)->GetEarnings() << std::endl;
+	}
 	std::cout << std::endl;
 }
 
 void Database::PrintPeople(People people)
 {
+	std::cout << std::endl;
 	for (auto person : people)
 	{
 		PrintPersonalInformation(person);
@@ -131,6 +141,7 @@ void Database::PrintPeople(People people)
 
 void Database::PrintPeople()
 {
+	std::cout << std::endl;
 	for (auto person : Persons)
 	{
 		PrintPersonalInformation(person);
@@ -140,14 +151,30 @@ void Database::PrintPeople()
 void Database::SavePeopletoFile()
 {
 	std::ofstream DatabaseFile(defaultFile);
-	for (auto person : Persons)
+	for (auto& person : Persons)
 	{
-		DatabaseFile << "Person" << std::endl;
-		DatabaseFile << person.GetName() << std::endl;
-		DatabaseFile << person.GetSurname() << std::endl;
-		DatabaseFile << person.GetPesel() << std::endl;
-		DatabaseFile << person.GetAddress() << std::endl;
-		DatabaseFile << GenderToString(person.GetGender()) << std::endl;
+		if (dynamic_cast<Student*>(person))
+		{
+			DatabaseFile << "Student" << std::endl;
+		}
+		if (dynamic_cast<Employee*>(person))
+		{
+			DatabaseFile << "Employee" << std::endl;
+		}
+		
+		DatabaseFile << person->GetName() << std::endl;
+		DatabaseFile << person->GetSurname() << std::endl;
+		DatabaseFile << person->GetPesel() << std::endl;
+		DatabaseFile << person->GetAddress() << std::endl;
+		DatabaseFile << GenderToString(person->GetGender()) << std::endl;
+		if (dynamic_cast<Student*>(person))
+		{
+			DatabaseFile << dynamic_cast<Student*>(person)->GetIndex() << std::endl;
+		}
+		if (dynamic_cast<Employee*>(person))
+		{
+			DatabaseFile << dynamic_cast<Employee*>(person)->GetEarnings() << std::endl;
+		}
 		DatabaseFile << "-------------------" << std::endl;
 	}
 	DatabaseFile.close();
@@ -155,27 +182,56 @@ void Database::SavePeopletoFile()
 
 void Database::LoadPeoplefromFile()
 {
-	Person loadedPerson;
-	bool bLoadingPerson = false;
+	Student* loadedStudent;
+	Employee* loadedEmployee;
+	bool bLoadingStudent = false;
+	bool bLoadingEmployee = false;
 	std::vector <std::string> loadedPersonInfo;
+	
 	std::string line;
 	std::ifstream DatabaseFile(defaultFile);
 	if (DatabaseFile.is_open())
 	{
 		while (std::getline(DatabaseFile, line))
 		{
-			if (line == "Person")
+			if ("Student" == line)
 			{
-				bLoadingPerson = true;
+				bLoadingStudent = true;
 			}
-			else if (bLoadingPerson)
+			if ("Employee" == line)
 			{
-				if (line == "-------------------")
+				bLoadingEmployee = true;
+			}
+			if (bLoadingStudent || bLoadingEmployee)
+			{
+				if ("-------------------" == line)
 				{
-					bLoadingPerson = false;
-					Person loadedPerson(loadedPersonInfo[0], loadedPersonInfo[1], loadedPersonInfo[2], loadedPersonInfo[3], StringToGender(loadedPersonInfo[4]));
-					loadedPersonInfo.clear();
-					AddPerson(loadedPerson);
+					if (bLoadingStudent)
+					{
+						loadedStudent = new Student(
+							loadedPersonInfo[1],
+							loadedPersonInfo[2],
+							loadedPersonInfo[3],
+							loadedPersonInfo[4],
+							StringToGender(loadedPersonInfo[5]),
+							stoi(loadedPersonInfo[6]));
+						loadedPersonInfo.clear();
+						AddPerson(loadedStudent);
+					}
+					else if (bLoadingEmployee)
+					{
+						loadedEmployee = new Employee(
+							loadedPersonInfo[1],
+							loadedPersonInfo[2],
+							loadedPersonInfo[3],
+							loadedPersonInfo[4],
+							StringToGender(loadedPersonInfo[5]),
+							stoi(loadedPersonInfo[6]));
+						loadedPersonInfo.clear();
+						AddPerson(loadedEmployee);
+					}
+					bLoadingStudent = false;
+					bLoadingEmployee = false;
 				}
 				else
 				{
