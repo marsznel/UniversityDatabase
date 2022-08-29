@@ -22,4 +22,7 @@ public:
 	void PrintPersonalInformation(Person *person);
 	void SavePeopletoFile();
 	void LoadPeoplefromFile();
+	void SortByPesel();
+	void SortBySurname();
+	void SortByEarnings();
 };

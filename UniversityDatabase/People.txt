@@ -1,16 +1,24 @@
-Student
-Name
-Surname
-96012109879
-New Address
-Female
-124515
--------------------
 Employee
-Name
+Jan
 Surname
 90090515836
 Address
+Male
+4000
+-------------------
+Employee
+Kasia
+Surname
+80072909146
+Address
 Female
-59898
+3500
+-------------------
+Student
+Andrzej
+Surname
+96012109879
+New Address
+Male
+124515
 -------------------

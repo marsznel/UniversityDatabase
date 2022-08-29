@@ -37,6 +37,8 @@ inline Gender StringToGender(std::string gender)
 		virtual void SetAddress(std::string newAddress);
 		Gender GetGender();
 		bool operator == (const Person &person);
+		bool operator > (const Person person);
+		bool Sort(const Person& person1, const Person& person2);
 	};
 
 	

@@ -8,6 +8,25 @@
 #include <list>
 #include <algorithm>
 
+bool ComparePesel(Person* person1, Person* person2)
+{
+	return person1->GetPesel() < person2->GetPesel();
+}
+
+bool CompareSurname(Person* person1, Person* person2)
+{
+	return person1->GetSurname() < person2->GetSurname();
+}
+
+bool CompareEarnings(Person* person1, Person* person2)
+{
+	if (dynamic_cast<Employee*>(person1) && dynamic_cast<Employee*>(person2))
+	{
+		return dynamic_cast<Employee*>(person1)->GetEarnings() < dynamic_cast<Employee*>(person2)->GetEarnings();
+	}
+	return false;
+}
+
 void Database::AddPerson(Person* newPerson)
 {
 	if (ValidatePesel(newPerson->GetPesel()))
@@ -245,4 +264,19 @@ void Database::LoadPeoplefromFile()
 	{
 		std::cout << "Cannot open file" << std::endl;
 	}
+}
+
+void Database::SortByPesel()
+{
+	sort(Persons.begin(), Persons.end(), ComparePesel);
+}
+
+void Database::SortBySurname()
+{
+	sort(Persons.begin(), Persons.end(), CompareSurname);
+}
+
+void Database::SortByEarnings()
+{
+	sort(Persons.begin(), Persons.end(), CompareEarnings);
 }

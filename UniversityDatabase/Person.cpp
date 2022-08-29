@@ -1,6 +1,7 @@
 #include "Person.h"
 #include <iostream>
 
+
 Person::Person(const std::string Name, const std::string Surname, const std::string Pesel, const std::string Address, const Gender Gender)
 {
 	name = Name;
@@ -48,7 +49,17 @@ Gender Person::GetGender()
 	return gender;
 }
 
-bool Person::operator == (const Person &person)
+bool Person::operator == (const Person& person)
 {
 	return this->pesel == person.pesel;
+}
+
+bool Person::operator > (const Person person)
+{
+	return true;
+}
+
+bool Person::Sort(const Person& person1, const Person& person2)
+{
+	return person1.pesel > person1.pesel;
 }
