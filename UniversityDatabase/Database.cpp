@@ -7,6 +7,7 @@
 #include <cctype>
 #include <list>
 #include <algorithm>
+#include <random>
 
 bool ComparePesel(Person* person1, Person* person2)
 {
@@ -85,7 +86,7 @@ People Database::GetPersons()
 void Database::RemovePersonByPesel(const std::string pesel)
 {
 	Person* foundPerson = SearchByPesel(pesel);
-	if (NULL != foundPerson)
+	if (nullptr != foundPerson)
 	{
 		Persons.erase(std::find(Persons.begin(), Persons.end(), foundPerson));
 		std::cout << "Person was succesfully removed" << std::endl;
@@ -99,7 +100,7 @@ void Database::RemovePersonByPesel(const std::string pesel)
 People Database::SearchBySurname(const std::string surname)
 {
 	People foundPeople;
-	for (auto &person : Persons)
+	for (const auto &person : Persons)
 	{
 		if (surname == person->GetSurname())
 		{
@@ -111,21 +112,21 @@ People Database::SearchBySurname(const std::string surname)
 
 Person* Database::SearchByPesel(const std::string pesel)
 {
-	for (auto &person : Persons)
+	for (const auto &person : Persons)
 	{
 		if (pesel == person->GetPesel())
 		{
 			return person;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Database::ModifyAddressByPesel(const std::string pesel, const std::string newAddress)
 {
 	
 	Person* foundPerson = SearchByPesel(pesel);
-	if (NULL != foundPerson)
+	if (nullptr != foundPerson)
 	{
 		foundPerson->SetAddress(newAddress);
 	}
@@ -152,7 +153,7 @@ void Database::PrintPersonalInformation(Person *person)
 void Database::PrintPeople(People people)
 {
 	std::cout << std::endl;
-	for (auto person : people)
+	for (const auto person : people)
 	{
 		PrintPersonalInformation(person);
 	}
@@ -161,7 +162,7 @@ void Database::PrintPeople(People people)
 void Database::PrintPeople()
 {
 	std::cout << std::endl;
-	for (auto person : Persons)
+	for (const auto person : Persons)
 	{
 		PrintPersonalInformation(person);
 	}
@@ -170,7 +171,7 @@ void Database::PrintPeople()
 void Database::SavePeopletoFile()
 {
 	std::ofstream DatabaseFile(defaultFile);
-	for (auto& person : Persons)
+	for (const auto& person : Persons)
 	{
 		if (dynamic_cast<Student*>(person))
 		{
@@ -263,6 +264,73 @@ void Database::LoadPeoplefromFile()
 	else
 	{
 		std::cout << "Cannot open file" << std::endl;
+	}
+}
+
+std::vector <std::string> Database::GenerateInfoFromFile(int numberOfPeople, string fileName)
+{
+	std::vector <std::string> loadedInfo;
+	std::string line;
+
+
+	std::ifstream LoadedFile(fileName);
+	if (LoadedFile.is_open())
+	{
+		while (std::getline(LoadedFile, line))
+		{
+			loadedInfo.push_back(line);
+		}
+	}
+	LoadedFile.close();
+	std::shuffle(std::begin(loadedInfo), std::end(loadedInfo), std::random_device());
+	loadedInfo.resize(numberOfPeople);
+
+	return loadedInfo;
+}
+
+void Database::GenerateData(int numberOfPeople)
+{
+	std::vector <std::string> loadedNames;
+	std::vector <std::string> loadedSurnames;
+	std::vector <std::string> loadedPesels;
+	std::vector <std::string> loadedAddresses;
+	std::vector <std::string> loadedEarningsAndIndexes;
+	std::string line;
+
+	// Generate Names - all names have format "Name M/F" and gender of person is read from last letter
+	loadedNames = GenerateInfoFromFile(numberOfPeople, "Files/Names.txt");
+	loadedSurnames = GenerateInfoFromFile(numberOfPeople, "Files/Surnames.txt");
+	loadedPesels = GenerateInfoFromFile(numberOfPeople, "Files/Pesels.txt");
+	loadedAddresses = GenerateInfoFromFile(numberOfPeople, "Files/Addresses.txt");
+	// Generate Earnings/Indexes - all names have format "Information E/S" and type of person is read from last letter
+	loadedEarningsAndIndexes = GenerateInfoFromFile(numberOfPeople, "Files/EarningAndIndexes.txt");
+
+	// Adding new Persons do Database
+	for (int i = 0; i < numberOfPeople; i++)
+	{
+		int lengthOfLoadedName = loadedNames[i].length();
+		if (loadedEarningsAndIndexes[i][loadedEarningsAndIndexes[i].length() - 1] == 'S')
+		{
+			Student* newStudent = new Student(
+				loadedNames[i].substr(0, loadedNames[i].length() - 2),
+				loadedSurnames[i], loadedPesels[i],
+				loadedAddresses[i],
+				loadedNames[i][lengthOfLoadedName - 1] == 'F' ? Gender::Female : Gender::Male,
+				std::stol(loadedEarningsAndIndexes[i])
+			);
+			AddPerson(newStudent);
+		}
+		else
+		{
+			Employee* newEmployee = new Employee(
+				loadedNames[i].substr(0, loadedNames[i].length() - 2),
+				loadedSurnames[i], loadedPesels[i],
+				loadedAddresses[i],
+				loadedNames[i][lengthOfLoadedName - 1] == 'F' ? Gender::Female : Gender::Male,
+				std::stof(loadedEarningsAndIndexes[i])
+			);
+			AddPerson(newEmployee);
+		}
 	}
 }
 

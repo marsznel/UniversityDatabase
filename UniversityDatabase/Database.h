@@ -22,6 +22,8 @@ public:
 	void PrintPersonalInformation(Person *person);
 	void SavePeopletoFile();
 	void LoadPeoplefromFile();
+	std::vector <std::string> GenerateInfoFromFile(int numberOfPeople, string fileName);
+	void GenerateData(int numberOfPeople);
 	void SortByPesel();
 	void SortBySurname();
 	void SortByEarnings();
