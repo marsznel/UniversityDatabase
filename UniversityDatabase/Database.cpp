@@ -170,34 +170,46 @@ void Database::PrintPeople()
 
 void Database::SavePeopletoFile()
 {
-	std::ofstream DatabaseFile(defaultFile);
-	for (const auto& person : Persons)
-	{
-		if (dynamic_cast<Student*>(person))
+	try {
+		std::ofstream DatabaseFile(defaultFile);
+		if (!DatabaseFile.is_open())
 		{
-			DatabaseFile << "Student" << std::endl;
+			throw 101;
 		}
-		if (dynamic_cast<Employee*>(person))
+		for (const auto& person : Persons)
 		{
-			DatabaseFile << "Employee" << std::endl;
-		}
+			if (dynamic_cast<Student*>(person))
+			{
+				DatabaseFile << "Student" << std::endl;
+			}
+			if (dynamic_cast<Employee*>(person))
+			{
+				DatabaseFile << "Employee" << std::endl;
+			}
 		
-		DatabaseFile << person->GetName() << std::endl;
-		DatabaseFile << person->GetSurname() << std::endl;
-		DatabaseFile << person->GetPesel() << std::endl;
-		DatabaseFile << person->GetAddress() << std::endl;
-		DatabaseFile << GenderToString(person->GetGender()) << std::endl;
-		if (dynamic_cast<Student*>(person))
-		{
-			DatabaseFile << dynamic_cast<Student*>(person)->GetIndex() << std::endl;
+			DatabaseFile << person->GetName() << std::endl;
+			DatabaseFile << person->GetSurname() << std::endl;
+			DatabaseFile << person->GetPesel() << std::endl;
+			DatabaseFile << person->GetAddress() << std::endl;
+			DatabaseFile << GenderToString(person->GetGender()) << std::endl;
+			if (dynamic_cast<Student*>(person))
+			{
+				DatabaseFile << dynamic_cast<Student*>(person)->GetIndex() << std::endl;
+			}
+			if (dynamic_cast<Employee*>(person))
+			{
+				DatabaseFile << dynamic_cast<Employee*>(person)->GetEarnings() << std::endl;
+			}
+			DatabaseFile << "-------------------" << std::endl;
 		}
-		if (dynamic_cast<Employee*>(person))
-		{
-			DatabaseFile << dynamic_cast<Employee*>(person)->GetEarnings() << std::endl;
-		}
-		DatabaseFile << "-------------------" << std::endl;
+		DatabaseFile.close();
 	}
-	DatabaseFile.close();
+	catch (int errorCode) {
+		if (101 == errorCode)
+		{
+			std::cout << "Can't save data" << endl;
+		}
+	}
 }
 
 void Database::LoadPeoplefromFile()
@@ -209,9 +221,13 @@ void Database::LoadPeoplefromFile()
 	std::vector <std::string> loadedPersonInfo;
 	
 	std::string line;
-	std::ifstream DatabaseFile(defaultFile);
-	if (DatabaseFile.is_open())
+	try
 	{
+		std::ifstream DatabaseFile(defaultFile);
+		if (!DatabaseFile.is_open())
+		{
+			throw 102;
+		}
 		while (std::getline(DatabaseFile, line))
 		{
 			if ("Student" == line)
@@ -261,9 +277,11 @@ void Database::LoadPeoplefromFile()
 		}
 		DatabaseFile.close();
 	}
-	else
-	{
-		std::cout << "Cannot open file" << std::endl;
+	catch (int errorCode) {
+		if (102 == errorCode)
+		{
+			std::cout << "Can't load data" << std::endl;
+		}
 	}
 }
 
@@ -272,21 +290,24 @@ std::vector <std::string> Database::GenerateInfoFromFile(int numberOfPeople, str
 	std::vector <std::string> loadedInfo;
 	std::string line;
 
-
-	std::ifstream LoadedFile(fileName);
-	if (LoadedFile.is_open())
-	{
+		std::ifstream LoadedFile(fileName);
+		if (!LoadedFile.is_open())
+		{
+			throw 103;
+		}
+		
 		while (std::getline(LoadedFile, line))
 		{
 			loadedInfo.push_back(line);
 		}
-	}
-	LoadedFile.close();
-	std::shuffle(std::begin(loadedInfo), std::end(loadedInfo), std::random_device());
-	loadedInfo.resize(numberOfPeople);
+		LoadedFile.close();
+		std::shuffle(std::begin(loadedInfo), std::end(loadedInfo), std::random_device());
+		loadedInfo.resize(numberOfPeople);
 
-	return loadedInfo;
+		return loadedInfo;
 }
+	
+
 
 void Database::GenerateData(int numberOfPeople)
 {
@@ -296,6 +317,9 @@ void Database::GenerateData(int numberOfPeople)
 	std::vector <std::string> loadedAddresses;
 	std::vector <std::string> loadedEarningsAndIndexes;
 	std::string line;
+
+	try
+	{
 
 	// Generate Names - all names have format "Name M/F" and gender of person is read from last letter
 	loadedNames = GenerateInfoFromFile(numberOfPeople, "Files/Names.txt");
@@ -330,6 +354,13 @@ void Database::GenerateData(int numberOfPeople)
 				std::stof(loadedEarningsAndIndexes[i])
 			);
 			AddPerson(newEmployee);
+		}
+	}
+}
+	catch (int errorCode) {
+		if (103 == errorCode)
+		{
+			std::cout << "Can't generate data" << std::endl;
 		}
 	}
 }
